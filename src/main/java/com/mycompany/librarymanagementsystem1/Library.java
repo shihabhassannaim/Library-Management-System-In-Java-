@@ -123,14 +123,18 @@ public class Library {
         }
     }
 
-    public User getUserByUsername(String username) {
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return user;
-            }
-        }
+public User getUserByUsername(String username) {
+    if (username == null || username.isEmpty()) {
         return null;
     }
+    for (User user : users) {
+        if (user.getUsername().equals(username)) {
+            return user;
+        }
+    }
+    return null;
+}
+
 
     public Book searchBookByTitle(String title) {
         for (Book book : books) {

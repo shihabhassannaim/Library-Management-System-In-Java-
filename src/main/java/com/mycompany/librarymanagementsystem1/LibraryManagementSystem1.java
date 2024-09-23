@@ -41,7 +41,7 @@ public class LibraryManagementSystem1 {
                 username = scanner.nextLine();
                 System.out.print("Enter a new password: ");
                 password = scanner.nextLine();
-                System.out.print("Enter role (admin/member): ");
+                System.out.print("Enter role (admin/visitor): ");
                 String role = scanner.nextLine();
 
                 // Check if the username already exists
