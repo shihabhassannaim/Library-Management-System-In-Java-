@@ -31,6 +31,9 @@ public class Book implements Serializable {
 
     public static Book fromString(String data) {
         String[] parts = data.split(",");
+        if (parts.length < 4) {
+            throw new IllegalArgumentException("Invalid book data format.");
+        }
         Book book = new Book(parts[0], parts[1], parts[2]);
         book.isBorrowed = Boolean.parseBoolean(parts[3]);
         return book;

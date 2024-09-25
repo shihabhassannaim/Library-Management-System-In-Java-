@@ -10,8 +10,7 @@ public class Library {
     private final String booksFile = "books.txt";
     private final String membersFile = "members.txt";
     private final String usersFile = "users.txt";
-
-    private int memberCounter = 1; // Simple counter to generate unique member IDs
+    private static int memberCounter = 1;
 
     public Library() {
         books = new ArrayList<>();
@@ -30,12 +29,8 @@ public class Library {
     private void ensureFileExists(String fileName) {
         File file = new File(fileName);
         try {
-            if (!file.exists()) {
-                if (file.createNewFile()) {
-                    System.out.println("File created: " + fileName);
-                } else {
-                    System.out.println("Failed to create file: " + fileName);
-                }
+            if (!file.exists() && file.createNewFile()) {
+                System.out.println("File created: " + fileName);
             }
         } catch (IOException e) {
             System.out.println("Error ensuring file exists: " + e.getMessage());
@@ -43,7 +38,7 @@ public class Library {
     }
 
     public String generateMemberId() {
-        return "M" + memberCounter++; // Generates IDs like M1, M2, M3, etc.
+        return "M" + memberCounter++;
     }
 
     private void loadUsers() {
@@ -54,6 +49,8 @@ public class Library {
             }
         } catch (IOException e) {
             System.out.println("Error loading users: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error parsing user data: " + e.getMessage());
         }
     }
 
@@ -75,6 +72,8 @@ public class Library {
             }
         } catch (IOException e) {
             System.out.println("Error loading books: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error parsing book data: " + e.getMessage());
         }
     }
 
@@ -86,13 +85,19 @@ public class Library {
             }
         } catch (IOException e) {
             System.out.println("Error loading members: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error parsing member data: " + e.getMessage());
         }
     }
 
     public void registerUser(User user) {
-        users.add(user);
-        saveUsers();
-        System.out.println("User registered successfully: " + user.getUsername());
+        if (getUserByUsername(user.getUsername()) == null) {
+            users.add(user);
+            saveUsers();
+            System.out.println("User registered successfully: " + user.getUsername());
+        } else {
+            System.out.println("Username already exists.");
+        }
     }
 
     private void saveUsers() {
@@ -123,18 +128,14 @@ public class Library {
         }
     }
 
-public User getUserByUsername(String username) {
-    if (username == null || username.isEmpty()) {
+    public User getUserByUsername(String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
         return null;
     }
-    for (User user : users) {
-        if (user.getUsername().equals(username)) {
-            return user;
-        }
-    }
-    return null;
-}
-
 
     public Book searchBookByTitle(String title) {
         for (Book book : books) {
@@ -156,14 +157,12 @@ public User getUserByUsername(String username) {
         return null;
     }
 
-    // Add the missing addBook method
     public void addBook(Book book) {
         books.add(book);
-        saveBooks(); // Save to the file after adding
+        saveBooks();
         System.out.println("Book added: " + book.getTitle());
     }
 
-    // Save books to file
     private void saveBooks() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(booksFile))) {
             for (Book book : books) {

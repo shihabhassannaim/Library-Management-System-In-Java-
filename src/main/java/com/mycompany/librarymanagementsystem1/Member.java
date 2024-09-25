@@ -14,7 +14,6 @@ public class Member implements Serializable {
         this.borrowedBooks = new ArrayList<>();
     }
 
-    // Getters
     public String getName() {
         return name;
     }
@@ -24,37 +23,35 @@ public class Member implements Serializable {
     }
 
     public void borrowBook(Book book) {
-        if (!book.isBorrowed()) {
+        if (book != null && !book.isBorrowed()) {
             borrowedBooks.add(book);
             book.borrowBook();
             System.out.println("You have borrowed: " + book.getTitle());
         } else {
-            System.out.println("Sorry, the book is already borrowed.");
+            System.out.println("Sorry, the book is already borrowed or does not exist.");
         }
     }
 
     public void returnBook(Book book) {
-        if (borrowedBooks.contains(book)) {
+        if (book != null && borrowedBooks.contains(book)) {
             borrowedBooks.remove(book);
             book.returnBook();
             System.out.println("You have returned: " + book.getTitle());
         } else {
-            System.out.println("This book was not borrowed by you.");
+            System.out.println("This book was not borrowed by you or does not exist.");
         }
     }
 
     @Override
     public String toString() {
-        return name + "," + memberId; // Ensure saving the correct format
+        return name + "," + memberId;
     }
 
-    // Static method to create a Member from a string
     public static Member fromString(String data) {
         String[] parts = data.split(",");
-        if (parts.length == 2) {
-            return new Member(parts[0], parts[1]);
-        } else {
-            throw new IllegalArgumentException("Invalid member data format. Expected 2 parts but found: " + parts.length);
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("Invalid member data format.");
         }
+        return new Member(parts[0], parts[1]);
     }
 }
